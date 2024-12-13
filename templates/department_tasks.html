@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ department_name }} Görevleri</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Google Fonts (Roboto) -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome for Icons -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        /* Genel Sayfa Tasarımı */
+        body {
+            font-family: 'Roboto', sans-serif;
+            background: #f0f2f5;
+            color: #333;
+        }
+
+        h1 {
+            font-weight: 700;
+            color: #4a4a4a;
+            margin-bottom: 30px;
+        }
+
+        /* Tablo Tasarımı */
+        .table-container {
+            background: #ffffff;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0 15px;
+        }
+
+        .table thead th {
+            background: #4a90e2;
+            color: #ffffff;
+            padding: 12px 15px;
+            border: none;
+            text-align: center;
+            font-size: 1rem;
+        }
+
+        .table tbody tr {
+            background: #ffffff;
+            border-radius: 8px;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .table tbody tr:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.1);
+        }
+
+        .table td {
+            padding: 12px 15px;
+            vertical-align: middle;
+            text-align: center;
+            font-size: 0.95rem;
+        }
+
+        /* Geri Butonu */
+        .btn-back {
+            background: #ffc107;
+            color: black;
+            font-weight: bold;
+            padding: 10px 20px;
+            border-radius: 20px;
+            text-transform: uppercase;
+            transition: all 0.3s;
+            border: none;
+        }
+
+        .btn-back:hover {
+            background: #e0a800;
+            color: white;
+        }
+
+        /* Checkbox Tasarımı */
+        .checkbox input {
+            width: 20px;
+            height: 20px;
+            accent-color: #4a90e2;
+        }
+
+        /* Durum Etiketleri */
+        .status {
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            color: #ffffff;
+            display: inline-block;
+        }
+
+        .status.completed {
+            background: #28a745;
+        }
+
+        .status.pending {
+            background: #ffc107;
+            color: #333333;
+        }
+
+        /* Tamamlanma Tarihi */
+        .completion-time {
+            color: #6c757d;
+            font-size: 0.85rem;
+            font-style: italic;
+        }
+
+        /* Notlar */
+        .form-control {
+            resize: vertical;
+            min-height: 50px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container my-5">
+        <!-- Başlık -->
+        <h1 class="text-center">{{ department_name }} Görevleri</h1>
+
+        <!-- Geri Butonu ve Kaydet Butonu -->
+        <div class="d-flex justify-content-between mb-3">
+            <a href="/" class="btn btn-back"><i class="fas fa-arrow-left"></i> Geri</a>
+            <button type="submit" form="task-form" class="btn btn-primary"><i class="fas fa-save"></i> Kaydet</button>
+        </div>
+
+        <div class="table-container">
+            <!-- Form Başlangıcı -->
+            <h1 class="text-center">{{ user_name }} - {{ department_name }} Görevleri</h1>
+
+<form action="/bulk_update/{{ department_name }}/{{ user_name }}" method="POST">
+    <table class="table table-hover">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>İşlem</th>
+                <th>Kod</th>
+                <th>Sorumlu Kişi</th>
+                <th>Durum</th>
+                <th>Tamamlanma Tarihi</th>
+                <th>Notlar</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for task in tasks %}
+            <tr>
+                <td>
+                    <input type="checkbox" name="is_completed_{{ task.id }}" {% if task.is_completed %}checked{% endif %}>
+                </td>
+                <td>{{ task.process_name }}</td>
+                <td>{{ task.process_code }}</td>
+                <td>{{ task.responsible_person }}</td>
+                <td>
+                    <span class="badge {% if task.is_completed %}bg-success{% else %}bg-warning{% endif %}">
+                        {% if task.is_completed %}Tamamlandı{% else %}Bekliyor{% endif %}
+                    </span>
+                </td>
+                <td>
+                    {% if task.completion_time %}
+                    {{ task.completion_time.strftime('%d %B %Y %H:%M') }}
+                    {% else %}
+                    ---
+                    {% endif %}
+                </td>
+                <td>
+                    <textarea name="notes_{{ task.id }}" class="form-control">{{ task.notes or '' }}</textarea>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <button type="submit" class="btn btn-primary">Kaydet</button>
+</form>
+        </div>
+    </div>
+
+    <!-- Bootstrap 5 JS and Dependencies -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Font Awesome JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
+</body>
+</html>

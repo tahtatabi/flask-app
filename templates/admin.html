@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Paneli</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+    <div class="container my-5">
+        <h1 class="text-center mb-4">Admin Paneli</h1>
+        <form action="/upload" method="POST" enctype="multipart/form-data" class="mb-4">
+            <div class="input-group">
+                <input type="file" name="file" class="form-control" required>
+                <button type="submit" class="btn btn-primary">Excel Güncelle</button>
+            </div>
+        </form>
+        <form action="/delete_all" method="POST" class="mb-4">
+            <button type="submit" class="btn btn-danger">Tüm Görevleri Sil</button>
+        </form>
+        <table class="table table-bordered table-striped">
+            <thead class="table-dark">
+                <tr>
+                    <th>İşlem</th>
+                    <th>Kod</th>
+                    <th>Departman</th>
+                    <th>Sorumlu Kişi</th>
+                    <th>Tamamlandı</th>
+                    <th>Notlar</th>
+                    <th>İşlemler</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for task in tasks %}
+                <tr>
+                    <td>{{ task.process_name }}</td>
+                    <td>{{ task.process_code }}</td>
+                    <td>{{ task.department }}</td>
+                    <td>{{ task.responsible_person }}</td>
+                    <td>{{ 'Evet' if task.is_completed else 'Hayır' }}</td>
+                    <td>{{ task.notes or '' }}</td>
+                    <td>
+                        <form action="/delete/{{ task.id }}" method="POST" style="display:inline;">
+                            <button type="submit" class="btn btn-danger btn-sm">Sil</button>
+                        </form>
+                        <a href="/edit/{{ task.id }}" class="btn btn-warning btn-sm">Düzenle</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <a href="/logout" class="btn btn-secondary">Çıkış Yap</a>
+    </div>
+</body>
+</html>
